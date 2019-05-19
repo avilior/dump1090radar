@@ -31,50 +31,56 @@ const values = [
 ];
 */
 
-function RadarTable(props) {
-    const { classes } = props;
 
-    return (
-        <Paper className={classes.root}>
-            <Table className={classes.table}>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>ICAO</TableCell>
-                        <TableCell align="right">CALL</TableCell>
-                        <TableCell align="right">SQWK</TableCell>
-                        <TableCell align="right">ALT</TableCell>
-                        <TableCell align="right">VRT</TableCell>
-                        <TableCell align="right">GSPD</TableCell>
-                        <TableCell align="right">HDG</TableCell>
-                        <TableCell align="right">TS</TableCell>
+function RadarTable(props) {
+    const { classes, showLatLon } = props;
+
+    return <Paper className={classes.root}>
+        <Table className={classes.table}>
+            <TableHead>
+                <TableRow>
+                    <TableCell>ICAO</TableCell>
+                    <TableCell align="right">CALL</TableCell>
+                    <TableCell align="right">SQWK</TableCell>
+                    <TableCell align="right">ALT</TableCell>
+                    <TableCell align="right">VRT</TableCell>
+                    <TableCell align="right">GSPD</TableCell>
+                    <TableCell align="right">HDG</TableCell>
+                    {showLatLon && <TableCell align="right">LAT</TableCell>}
+                    {showLatLon && <TableCell align="right">LON</TableCell>}
+                    <TableCell align="right">TS</TableCell>
+                </TableRow>
+            </TableHead>
+            <TableBody>
+                {props.data.map(row => (
+                    <TableRow key={row.icao24}>
+                        <TableCell component="th" scope="row">{row.icao24}</TableCell>
+                        <TableCell align="right">{row.callsign}</TableCell>
+                        <TableCell align="right">{row.squawk}</TableCell>
+                        <TableCell align="right">{row.altitude}</TableCell>
+                        <TableCell align="right">{row.verticalRate}</TableCell>
+                        <TableCell align="right">{row.groundSpeed}</TableCell>
+                        <TableCell align="right">{row.track}</TableCell>
+                        {showLatLon && <TableCell align="right">{row.lat}</TableCell>}
+                        {showLatLon && <TableCell align="right">{row.lon}</TableCell>}
+                        <TableCell align="right">{row.ts}</TableCell>
                     </TableRow>
-                </TableHead>
-                <TableBody>
-                    {props.data.map(row => (
-                        <TableRow key={row.icao24}>
-                            <TableCell component="th" scope="row">{row.icao24}</TableCell>
-                            <TableCell align="right">{row.callsign}</TableCell>
-                            <TableCell align="right">{row.squawk}</TableCell>
-                            <TableCell align="right">{row.altitude}</TableCell>
-                            <TableCell align="right">{row.verticalRate}</TableCell>
-                            <TableCell align="right">{row.groundSpeed}</TableCell>
-                            <TableCell align="right">{row.track}</TableCell>
-                            <TableCell align="right">{row.ts}</TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </Paper>
-    );
+                ))}
+            </TableBody>
+        </Table>
+    </Paper>;
 }
 
 RadarTable.propTypes = {
     classes: PropTypes.object.isRequired,
+    showLatLon: PropTypes.bool.isRequired,
+    data: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = (state, ownProps = {} ) => {
     return {
-        data : Object.values(state.ICAO24Table)
+        data : Object.values(state.ICAO24Table),
+        showLatLon: state.showLatLon
     }
 };
 

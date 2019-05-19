@@ -79,7 +79,11 @@ export default (state = {}, { type, payload, metadata }) => {
             Object.values(state.ICAO24Table).forEach(item=>{
 
                 if ( ((time_now - Date.parse(item.ts+'Z'))/1000) < state.maxAge){
-                    new_icao_table[item.icao24] = item;
+                    if (state.showLatLon && item.lat & item.lon) {
+                        new_icao_table[item.icao24] = item;
+                    }else{
+                        new_icao_table[item.icao24] = item
+                    }
                     if (item.lat && item.lon){
                         let current_icao =  {icao:item.icao24, trail:[], current:[]};
                         if (item.icao24 in state.markers){
