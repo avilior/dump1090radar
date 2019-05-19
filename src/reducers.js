@@ -76,26 +76,29 @@ export default (state = {}, { type, payload, metadata }) => {
             const time_now = Date.now();
             let new_icao_table = {};
             let new_markers = {};
-            Object.values(state.ICAO24Table).forEach(item=>{
+            Object.values(state.ICAO24Table).forEach(item =>{
 
                 if ( ((time_now - Date.parse(item.ts+'Z'))/1000) < state.maxAge){
-                    if (state.showLatLon && item.lat & item.lon) {
+                    if (state.showLatLon) {
                         new_icao_table[item.icao24] = item;
                     }else{
-                        new_icao_table[item.icao24] = item
+                        // if we dont show lat lon in the table then dont include items that dont have lat lon in the table
+                        if (item.lat && item.lon) {
+                            new_icao_table[item.icao24] = item
+                        }
                     }
                     if (item.lat && item.lon){
-                        let current_icao =  {icao:item.icao24, trail:[], current:[]};
+                        let current_icao =  {icao:item.icao24, callsign: item.callsign, altitude: item.altitude, trail:[], current:[]};
                         if (item.icao24 in state.markers){
                             current_icao = state.markers[item.icao24];
                         }
-                        const latlon = [item.lat, item.lon]
+                        const latlon = [item.lat, item.lon];
                         current_icao.current = latlon;
-                        if (current_icao.trail.length == 0) {
+                        if (current_icao.trail.length === 0) {
                             current_icao.trail.push(latlon);
                         }else{
                             const last_lastlon = current_icao.trail[current_icao.trail.length - 1];
-                            if (last_lastlon[0] != latlon[0] || last_lastlon[1] != latlon[1]){
+                            if (last_lastlon[0] !== latlon[0] || last_lastlon[1] !== latlon[1]){
                                 current_icao.trail.push(latlon);
                             }
                         }

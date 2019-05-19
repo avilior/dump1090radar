@@ -48,7 +48,7 @@ class RadarMap extends Component {
                 {this.props.markers.map((p, idx) =>
                     <Marker key={`marker-${idx}`} position={p.current}>
                         <Popup>
-                            <span>{p.icao} <br/> more info.</span>
+                            <span>{p.icao} <br/> Callsign: {p.callsign} Altitude: {p.altitude} </span>
                         </Popup>
                     </Marker>
                 )}
