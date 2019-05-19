@@ -1,26 +1,45 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {Component} from 'react';
 import './App.css';
+import NavBar from './components/NavBar';
+import RadarTable from './components/RadarTable';
+import RadarMap from './components/map';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import Grid from '@material-ui/core/Grid';
+import { withStyles } from '@material-ui/core/styles';
+
+
+const styles = theme => ({
+    root: {
+        flexGrow: 1,
+    },
+    radar: {
+        height:800,
+        width:'100%',
+    },
+    table: {
+        height: 800,
+        width: '100%',
+    }
+});
+
+
+class App extends Component {
+  render(){
+    const { classes } = this.props;
+    return (
+        <div className="App">
+          <NavBar />
+            <Grid container className={classes.root} wrap={'nowrap'}>
+                <Grid item className={classes.radar}  md={12}>
+                    <RadarMap />
+                </Grid>
+                <Grid item className={classes.table}  md={12}>
+                    <RadarTable />
+                </Grid>
+            </Grid>
+        </div>
+    );
+  }
 }
 
-export default App;
+export default withStyles(styles)(App);
