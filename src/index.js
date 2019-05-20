@@ -27,7 +27,7 @@ const setupStore = () => {
         maxAge: 120,
         ICAO24Table: {},
         markers: {},
-        showLatLon: true
+        showLatLon: false
     };
 
     const middleware = [];
