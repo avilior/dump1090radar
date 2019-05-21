@@ -1,6 +1,6 @@
-export const setupWebsocket = ({ host, port }) =>
+export const setupWebsocket = ({ ws_url}) =>
     new Promise((resolve) => {
-        const webSocket = new WebSocket(`ws://${host}:${port}/ws`);
+        const webSocket = new WebSocket(ws_url);
 
         const receive = (onMessageCb) => {
             console.log("GOT WEBSOCKET MESSAGE::");

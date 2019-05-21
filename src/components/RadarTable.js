@@ -48,7 +48,9 @@ function RadarTable(props) {
                     <TableCell align="right">HDG</TableCell>
                     {showLatLon && <TableCell align="right">LAT</TableCell>}
                     {showLatLon && <TableCell align="right">LON</TableCell>}
-                    <TableCell align="right">TS</TableCell>
+                    <TableCell align="right">BRG</TableCell>
+                    <TableCell align="right">DST</TableCell>
+                    <TableCell align="right">Age</TableCell>
                 </TableRow>
             </TableHead>
             <TableBody>
@@ -63,7 +65,9 @@ function RadarTable(props) {
                         <TableCell align="right">{row.track}</TableCell>
                         {showLatLon && <TableCell align="right">{row.lat}</TableCell>}
                         {showLatLon && <TableCell align="right">{row.lon}</TableCell>}
-                        <TableCell align="right">{row.ts}</TableCell>
+                        <TableCell align="right">{row.poi_bearing}</TableCell>
+                        <TableCell align="right">{row.poi_distance}</TableCell>
+                        <TableCell align="right">{row.age}</TableCell>
                     </TableRow>
                 ))}
             </TableBody>

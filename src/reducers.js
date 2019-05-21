@@ -12,6 +12,20 @@ import {
 
 import { radarUpdate } from "./actions/actionTypes";
 
+import LatLon from 'geodesy/latlon-spherical';
+
+const yow_lat = 45.320165386;
+const yow_lon = -75.668163994;
+const home_lat = 45.25056;
+const home_lon = -75.89996;
+
+const YOW = new LatLon(yow_lat, yow_lon);
+const POI = new LatLon(home_lat, home_lon);
+const distance_home_yow = POI.distanceTo(YOW);
+console.log(`Distance home to yow ${distance_home_yow} meters`);
+console.log(`Initial Bearing home to yow ${POI.initialBearingTo(YOW)}`);
+console.log(`Final Bearing home to yow ${POI.finalBearingTo(YOW)}`);
+
 
 const handlers = {
 
@@ -74,25 +88,36 @@ export default (state = {}, { type, payload, metadata }) => {
 
             // filter the table
             const time_now = Date.now();
-            let new_icao_table = {};
-            let new_markers = {};
-            Object.values(state.ICAO24Table).forEach(item =>{
+            let new_icao_table = {};  // to display the table
+            let new_markers = {};     // to display the map
+            Object.values(state.ICAO24Table).forEach(row  =>{
 
-                if ( ((time_now - Date.parse(item.ts+'Z'))/1000) < state.maxAge){
+                const age = (time_now - Date.parse(row.ts+'Z'))/1000.0;
+                row.age = age | 0; // truncate to int
+
+                if ( age < state.maxAge){
                     if (state.showLatLon) {
-                        new_icao_table[item.icao24] = item;
+                        new_icao_table[row.icao24] = row;
                     }else{
-                        // if we dont show lat lon in the table then dont include items that dont have lat lon in the table
-                        if (item.lat && item.lon) {
-                            new_icao_table[item.icao24] = item
+                        // if we dont show lat lon in the table then dont include rows that dont have lat lon in the table
+                        if (row.lat && row.lon) {
+                            new_icao_table[row.icao24] = row
                         }
                     }
-                    if (item.lat && item.lon){
-                        let current_icao =  {icao:item.icao24, callsign: item.callsign, altitude: item.altitude, trail:[], current:[]};
-                        if (item.icao24 in state.markers){
-                            current_icao = state.markers[item.icao24];
+                    if (row.lat && row.lon){
+
+                        const planeLatLon = new LatLon(row.lat, row.lon);
+                        const distance = (POI.distanceTo(planeLatLon)/1000.0) | 0;
+                        const bearing  = POI.initialBearingTo(planeLatLon) | 0;
+
+                        row.poi_distance = distance;
+                        row.poi_bearing  = bearing;
+
+                        let current_icao =  {icao:row.icao24, callsign: row.callsign, altitude: row.altitude, trail:[], current:[]};
+                        if (row.icao24 in state.markers){
+                            current_icao = state.markers[row.icao24];
                         }
-                        const latlon = [item.lat, item.lon];
+                        const latlon = [row.lat, row.lon];
                         current_icao.current = latlon;
                         if (current_icao.trail.length === 0) {
                             current_icao.trail.push(latlon);
@@ -102,7 +127,7 @@ export default (state = {}, { type, payload, metadata }) => {
                                 current_icao.trail.push(latlon);
                             }
                         }
-                        new_markers[item.icao24] = current_icao;
+                        new_markers[row.icao24] = current_icao;
                     }
                 }
             });

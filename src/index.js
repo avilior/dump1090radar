@@ -12,15 +12,19 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
+
+
 // the host port of the websocket to connect to (the python server)
-const host = "0.0.0.0";
-const port = 4000;
+let ws_protocol = (window.location.protocol === 'http:')? 'ws' : 'wss';
+let ws_host = window.location.hostname;
+let ws_port = 4000;
+const ws_url = new URL("/ws", `${ws_protocol}://${ws_host}:${ws_port}`);
+
+
 
 const home_lat = 45.25056;
 const home_lon = -75.89996;
 
-const home_lat2 = 45.25056;
-const home_lon2 = -75.4;
 
 const setupStore = () => {
     const initialState = {
@@ -37,7 +41,7 @@ const setupStore = () => {
         middleware.push(createLogger());
     }
 
-    return setupWebsocket({ host, port }).then(({ send, receive }) => {
+    return setupWebsocket({ ws_url }).then(({ send, receive }) => {
         middleware.push(thunkMiddleware.withExtraArgument({ send }));
 
         const store = createStore(
@@ -51,6 +55,9 @@ const setupStore = () => {
         return store;
     });
 };
+
+
+
 
 setupStore().then((store) =>
     ReactDOM.render(
